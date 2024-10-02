@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shh!</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* footer */
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: rgba(31, 41, 55, 1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+
+<div class="text-center w-full max-w-2xl p-4">
+    <h1 class="text-4xl font-bold mb-4">Shh!</h1>
+
+    <div id="passwordSection" class="hidden">
+        <form id="passwordForm" method="post">
+            <label for="inputPassword" class="label">Password</label>
+            <input id="inputPassword"
+                   name="password"
+                   type="password"
+                   class="w-full max-w-2xl p-4 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                   required>
+            <div class="flex justify-center mt-4">
+                <button type="submit"
+                        class="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none">Submit
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="revealSection" class="hidden">
+        <p class="text-xl mb-6">Warning! This secret will be shown only once.</p>
+        <button id="revealButton"
+                class="px-4 py-2 bg-green-600 rounded-md hover:bg-green-500 focus:outline-none">Reveal Secret
+        </button>
+    </div>
+
+    <p id="statusMessage" class="text-xl mb-6 hidden"></p>
+
+    <textarea id="secretText"
+              class="hidden w-full max-w-2xl h-48 p-4 bg-gray-800 border border-gray-700 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+
+    <div id="createNewSection" class="flex justify-center mt-4">
+        <a href="/" class="px-4 py-2 bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none">Create new one</a>
+    </div>
+</div>
+
+<footer class="text-center text-gray-500 text-sm mt-4">
+    &copy; 2021 Shh! Made with ❤️ by <a href="https://t.me/temamagic" class="underline">temamagic</a>
+</footer>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const pwd = urlParams.get('pwd');
+    const key = window.location.pathname.split('/').pop();
+    const passwordForm = document.getElementById('passwordForm');
+    const passwordSection = document.getElementById('passwordSection');
+    const revealSection = document.getElementById('revealSection');
+    const revealButton = document.getElementById('revealButton');
+    const statusMessage = document.getElementById('statusMessage');
+    const secretText = document.getElementById('secretText');
+    const createNewSection = document.getElementById('createNewSection');
+
+    if (pwd) {
+        revealSection.classList.remove('hidden');
+    } else {
+        passwordSection.classList.remove('hidden');
+    }
+
+    async function fetchSecret(password) {
+        try {
+            const response = await fetch('/api/view', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({key, password}),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                secretText.textContent = data.text;
+                secretText.classList.remove('hidden');
+                statusMessage.classList.add('hidden');
+
+                // Hide necessary sections
+                passwordSection.classList.add('hidden');
+                revealSection.classList.add('hidden');
+                // createNewSection.classList.add('hidden');
+            } else {
+                statusMessage.textContent = data.error || 'An error occurred.';
+                statusMessage.classList.remove('hidden');
+                secretText.classList.add('hidden');
+            }
+        } catch (error) {
+            statusMessage.textContent = 'Failed to fetch the secret.';
+            statusMessage.classList.remove('hidden');
+        }
+    }
+
+    revealButton.addEventListener('click', () => {
+        fetchSecret(pwd);
+    });
+
+    passwordForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const password = document.getElementById('inputPassword').value;
+        fetchSecret(password);
+    });
+</script>
+
+</body>
+</html>

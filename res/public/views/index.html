@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shh!</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="otpw.ru">
+    <meta property="og:description" content="OneTimePassWord - simple service for sharing secrets.">
+    <meta property="og:url" content="https://otpw.ru">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="otpw.ru">
+    <!-- Twitter meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="otpw.ru">
+    <meta name="twitter:description" content="OneTimePassWord - simple service for sharing secrets.">
+    <meta name="twitter:url" content="https://otpw.ru">
+    <style>
+        .copied {
+            background-color: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+            transition: background-color 0.5s, border-color 0.5s;
+        }
+
+        /* Анимация для плавного исчезновения подсветки */
+        .fade {
+            animation: fadeOut 2s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                background-color: rgba(99, 102, 241, 0.2);
+                border-color: rgba(99, 102, 241, 0.5);
+            }
+            100% {
+                background-color: rgba(31, 41, 55, 1);
+                border-color: rgba(55, 65, 81, 1);
+            }
+        }
+
+        /* Стили для хинта */
+        .hint {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: 5px;
+        }
+
+        /* Подписи к полям */
+        .label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 0.25rem;
+        }
+
+        /* footer */
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: rgba(31, 41, 55, 1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+
+<div class="text-center w-full max-w-2xl p-4">
+    <h1 class="text-4xl font-bold mb-4">Shh!</h1>
+    <textarea id="inputText"
+              class="w-full max-w-4xl h-48 p-4 bg-gray-800 border border-gray-700 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Paste your text here"></textarea>
+
+    <label for="durationSelect" class="block mt-4">Lifetime:</label>
+    <select id="durationSelect"
+            class="w-full max-w-2xl mt-2 p-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="15m">15 minutes</option>
+        <option value="30m">30 minutes</option>
+        <option value="1h" selected>1 hour</option>
+        <option value="2h">2 hours</option>
+        <option value="3h">3 hours</option>
+    </select>
+
+    <button id="createButton" class="mt-4 px-4 py-2 bg-green-600 rounded-md hover:bg-green-500 focus:outline-none">
+        Create
+    </button>
+
+    <div id="hiddenBlockFullLink" class="hidden mt-4">
+        <p class="label">Link + password</p>
+        <pre id="copyTextFullLink"
+             class="bg-gray-800 border border-gray-700 p-4 rounded-md cursor-pointer whitespace-pre-wrap break-words">https://shh.site/view/uuid?pwd=&lt;PASSWORD&gt;</pre>
+        <span class="hint">Click to copy full link</span>
+    </div>
+
+    <div id="hiddenBlockSeparate" class="hidden mt-4">
+        <p class="label">Link only</p>
+        <pre id="copyTextLink"
+             class="bg-gray-800 border border-gray-700 p-4 rounded-md cursor-pointer whitespace-pre-wrap break-words">https://shh.site/view/uuid</pre>
+        <span class="hint">Click to copy link</span>
+
+        <p class="label mt-4">Password</p>
+        <pre id="copyTextPassword"
+             class="bg-gray-800 border border-gray-700 p-4 rounded-md cursor-pointer whitespace-pre-wrap break-words">&lt;PASSWORD&gt;</pre>
+        <span class="hint">Click to copy password</span>
+    </div>
+
+    <div id="errorMessage" class="mt-4 text-red-500 hidden"></div>
+</div>
+
+<footer class="text-center text-gray-500 text-sm mt-4">
+    &copy; 2021 Shh! Made with ❤️ by <a href="https://t.me/temamagic" class="underline">temamagic</a>
+</footer>
+
+<script>
+    const copyTextFullLink = document.getElementById('copyTextFullLink');
+    const copyTextLink = document.getElementById('copyTextLink');
+    const copyTextPassword = document.getElementById('copyTextPassword');
+    const hiddenBlockFullLink = document.getElementById('hiddenBlockFullLink');
+    const hiddenBlockSeparate = document.getElementById('hiddenBlockSeparate');
+    const createButton = document.getElementById('createButton');
+    const inputText = document.getElementById('inputText');
+    const inputPassword = document.getElementById('inputPassword');
+    const durationSelect = document.getElementById('durationSelect');
+    const errorMessage = document.getElementById('errorMessage');
+
+    createButton.addEventListener('click', async () => {
+        errorMessage.classList.add('hidden'); // Скрыть сообщение об ошибке
+        const text = inputText.value;
+        const duration = durationSelect.value;
+
+        try {
+            const response = await fetch('/api/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({text, duration}),
+            });
+
+            const data = await response.json();
+            const currentUrl = window.location.href;
+
+            if (response.ok) {
+                copyTextFullLink.textContent = currentUrl + 'view/' + data.id + '?pwd=' + data.password;
+                hiddenBlockFullLink.classList.remove('hidden');
+
+                copyTextLink.textContent = currentUrl + 'view/' + data.id;
+                copyTextPassword.textContent = data.password;
+                hiddenBlockSeparate.classList.remove('hidden');
+            } else {
+                errorMessage.textContent = data.error;
+                errorMessage.classList.remove('hidden');
+                hiddenBlockFullLink.classList.add('hidden');
+                hiddenBlockSeparate.classList.add('hidden');
+            }
+        } catch (error) {
+            errorMessage.textContent = 'An error occurred while creating the link';
+            errorMessage.classList.remove('hidden');
+        }
+    });
+
+    // Copy to clipboard
+    function setupCopyEvent(copyElement) {
+        copyElement.addEventListener('click', () => {
+            navigator.clipboard.writeText(copyElement.textContent).then(() => {
+                copyElement.classList.add('copied');
+                setTimeout(() => {
+                    copyElement.classList.add('fade');
+                    setTimeout(() => {
+                        copyElement.classList.remove('copied', 'fade');
+                    }, 2000);
+                }, 500);
+            });
+        });
+    }
+
+    // Setup copy events
+    setupCopyEvent(copyTextFullLink);
+    setupCopyEvent(copyTextLink);
+    setupCopyEvent(copyTextPassword);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+env: "local"
+port: 8080
+redis:
+  addr: "redis://:redispwd@localhost:6379"
+  name_space: "onetimesecret"
