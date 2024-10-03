@@ -4,7 +4,6 @@ RUN apk add build-base
 RUN apk add git --no-cache
 ARG VERSION
 ARG BUILD
-ARG JOB_TOKEN
 ENV GO111MODULE=on \
     CGO_ENABLED=1 \
     GOOS=linux \
