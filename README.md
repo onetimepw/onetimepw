@@ -3,7 +3,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/onetimepw/onetimepw)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/onetimepw/onetimepw)
 
-![img.png](img.png)
+<img src="img.png" width="700" alt="" />
 
 # OneTimePW
 
@@ -56,7 +56,20 @@ The `version` field contains the commit hash, `release` contains the workflow ru
 
 ## 🔧 How to Install
 
+### 🚀 Quick Start with Docker
+```bash
+docker run -d --name otpw --restart=always -p 127.0.0.1:8080:8080 ghcr.io/onetimepw/onetimepw:latest
+```
+
+OneTimePW is now running on http://127.0.0.1:8080
+
+Now you can set up a reverse proxy like Nginx/Caddy/Traefik to serve the application over HTTPS.
+
 ### 🐳 Docker compose
+
+You can also use docker-compose to run OneTimePW (with or without redis).
+<details open>
+<summary>Example with redis</summary>
 
 docker-compose.yml:
 ```yaml
@@ -68,7 +81,7 @@ services:
       - 127.0.0.1:6379:6379
     volumes:
       - ./redis_data:/data
-    command: redis-server --requirepass someRedisPass
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
@@ -79,12 +92,16 @@ services:
     image: ghcr.io/onetimepw/onetimepw:master
     restart: always
     stop_signal: SIGINT
-    environment:
-      - GOMAXPROCS=1
     depends_on:
       - redis
-    volumes:
-      - ./config.yml:/app/config.yml
+    environment: # You can set environment variables here
+      - REDIS_ADDR=redis://:${REDIS_PASSWORD}@redis:6379
+      - PORT=8080
+      - NAME_SPACE=onetimesecret
+      - MEMORY_CAPACITY=10000 # for in memory cache, set capacity equal to 10000 elements
+# Alternatively, you can use a config file
+#    volumes:
+#      - ./otwp.config.yml:/app/config.yml
     ports:
       - 127.0.0.1:8080:8080
     logging:
@@ -96,17 +113,23 @@ services:
 volumes:
   redis_data:
 ```
-config.yml:
+</details>
+
+#### Configuration
+
+You can also configure the application using environment variables or a config file.
+
+<details>
+<summary>otwp.config.yml:</summary>
+
 ```yaml
 env: "prod"
 port: 8080
-redis:
-  addr: "redis://:someRedisPass@redis:6379"
-  name_space: "onetimesecret"
+redis_addr: "redis://:someRedisPass@localhost:6379"
+name_space: "onetimesecret"
+memory_capacity: 10000 # for in memory cache, set capacity equal to 10000 elements
 ```
-OneTimePW is now running on <http://127.0.0.1:8080>
-
-Now you can set up a reverse proxy like Nginx/Caddy/Traefik to serve the application over HTTPS.
+</details>
 
 ## Motivation
 - I was looking for a self-hosted service to securely share sensitive information, but I couldn't find one that was easy to use and looked simple. I found a few services that did this, but they were either too complicated to set up or didn't appeal to me (and they were written in Ruby)
@@ -120,3 +143,7 @@ If you love this project, please consider giving it a ⭐.
 ### Bug Reports / Feature Requests
 
 If you want to report a bug or request a new feature, feel free to open a [new issue](https://github.com/onetimepw/onetimepw/issues/new).
+
+### Pull Requests
+
+If you want to help us improve OneTimePW (especially if you are good with frontend, cuz i'm not), feel free to open a [pull request](https://github.com/onetimepw/onetimepw/pulls).
