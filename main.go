@@ -1,14 +1,14 @@
 package main
 
 import (
-	"app/build"
-	"app/domain"
-	"app/endpoint/web"
-	"app/util/logger"
 	"context"
 	"flag"
 	"fmt"
 	"github.com/jinzhu/configor"
+	"github.com/onetimepw/onetimepw/build"
+	"github.com/onetimepw/onetimepw/domain"
+	"github.com/onetimepw/onetimepw/endpoint/web"
+	"github.com/onetimepw/onetimepw/util/logger"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"os"

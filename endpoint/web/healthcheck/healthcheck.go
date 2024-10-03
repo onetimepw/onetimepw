@@ -1,6 +1,6 @@
 package healthcheck
 
-import "app/build"
+import "github.com/onetimepw/onetimepw/build"
 
 type HealthCheck struct {
 	Uptime   int

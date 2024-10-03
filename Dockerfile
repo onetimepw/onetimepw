@@ -17,8 +17,8 @@ RUN go mod download
 COPY ./ ./
 RUN go build -trimpath \
     -ldflags "\
-        -X 'app/build.Version=$VERSION' \
-        -X 'app/build.Release=$BUILD' \
+        -X 'github.com/onetimepw/onetimepw/build.Version=$VERSION' \
+        -X 'github.com/onetimepw/onetimepw/build.Release=$BUILD' \
         -s -w" \
     -o /binary
 

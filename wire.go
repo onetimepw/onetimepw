@@ -4,11 +4,11 @@
 package main
 
 import (
-	"app/domain"
-	"app/endpoint/web"
-	"app/gateway/redis"
-	"app/usecase/api"
 	"github.com/google/wire"
+	"github.com/onetimepw/onetimepw/domain"
+	"github.com/onetimepw/onetimepw/endpoint/web"
+	"github.com/onetimepw/onetimepw/gateway/redis"
+	"github.com/onetimepw/onetimepw/usecase/api"
 )
 
 func InitApp(config domain.Config) (application, error) {

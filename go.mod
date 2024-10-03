@@ -1,4 +1,4 @@
-module app
+module github.com/onetimepw/onetimepw
 
 go 1.22
 

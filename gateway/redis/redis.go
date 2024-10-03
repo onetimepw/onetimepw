@@ -1,9 +1,9 @@
 package redis
 
 import (
-	"app/domain"
 	"context"
 	"fmt"
+	"github.com/onetimepw/onetimepw/domain"
 	"github.com/redis/go-redis/v9"
 )
 

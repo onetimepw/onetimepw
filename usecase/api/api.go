@@ -1,11 +1,11 @@
 package api
 
 import (
-	"app/domain"
 	"context"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/onetimepw/onetimepw/domain"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"time"

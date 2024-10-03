@@ -1,8 +1,6 @@
 package web
 
 import (
-	"app/domain"
-	"app/usecase/api"
 	"context"
 	"encoding/json"
 	"errors"
@@ -10,6 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html/v2"
+	"github.com/onetimepw/onetimepw/domain"
+	"github.com/onetimepw/onetimepw/usecase/api"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"

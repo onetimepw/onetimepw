@@ -1,9 +1,9 @@
 package web
 
 import (
-	"app/build"
-	"app/endpoint/web/healthcheck"
 	"github.com/gofiber/fiber/v2"
+	"github.com/onetimepw/onetimepw/build"
+	"github.com/onetimepw/onetimepw/endpoint/web/healthcheck"
 	"time"
 )
 
