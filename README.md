@@ -24,7 +24,7 @@ That's it! No more worrying about sensitive information being stored in email or
 
 ## Demo
 
-You can try out OneTimePW at <https://onetimepw.ru>
+You can try out OneTimePW at <https://otpw.ru>
 
 ### How can I verify that the server is the same version as on GitHub?
 
