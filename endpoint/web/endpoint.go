@@ -10,7 +10,6 @@ import (
 	"github.com/gofiber/template/html/v2"
 	"github.com/onetimepw/onetimepw/domain"
 	"github.com/onetimepw/onetimepw/usecase/api"
-	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -19,23 +18,28 @@ import (
 	"time"
 )
 
+type Storage interface {
+	Status() error
+	Name() string
+}
+
 type Endpoint struct {
-	fiber       *fiber.App
-	config      domain.Config
-	redisClient *redis.Client
-	api         *api.API
+	fiber   *fiber.App
+	config  domain.Config
+	api     *api.API
+	storage Storage
 }
 
 func New(
 	config domain.Config,
-	redisClient *redis.Client,
 	apiUC *api.API,
+	storage Storage,
 ) (*Endpoint, error) {
 
 	endpoint := &Endpoint{
-		config:      config,
-		redisClient: redisClient,
-		api:         apiUC,
+		config:  config,
+		api:     apiUC,
+		storage: storage,
 	}
 
 	viewsPath := filepath.Join("./res", "public", "views")

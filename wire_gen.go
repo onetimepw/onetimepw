@@ -9,19 +9,19 @@ package main
 import (
 	"github.com/onetimepw/onetimepw/domain"
 	"github.com/onetimepw/onetimepw/endpoint/web"
-	"github.com/onetimepw/onetimepw/gateway/redis"
 	"github.com/onetimepw/onetimepw/usecase/api"
+	"github.com/onetimepw/onetimepw/usecase/storage"
 )
 
 // Injectors from wire.go:
 
 func InitApp(config domain.Config) (application, error) {
-	client, err := redis.NewClient(config)
+	storageStorage, err := storage.New(config)
 	if err != nil {
 		return application{}, err
 	}
-	apiAPI := api.New(config, client)
-	endpoint, err := web.New(config, client, apiAPI)
+	apiAPI := api.New(config, storageStorage)
+	endpoint, err := web.New(config, apiAPI, storageStorage)
 	if err != nil {
 		return application{}, err
 	}

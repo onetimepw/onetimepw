@@ -1,5 +1,5 @@
 env: "local"
 port: 8080
-redis:
-  addr: "redis://:redispwd@localhost:6379"
-  name_space: "onetimesecret"
+redis_addr: "redis://:redispwd@localhost:6379"
+name_space: "onetimesecret"
+memory_capacity: 10000 # for in memory cache, set capacity equal to 10000 elements

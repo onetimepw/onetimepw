@@ -17,24 +17,10 @@ func (w *Endpoint) handlerCheck(c *fiber.Ctx) error {
 			}
 		},
 
-		// состояние Redis
+		// состояние Storage
 		func() healthcheck.CheckerResult {
-			name := "redis"
-			conn := w.redisClient.Conn()
-			defer conn.Close()
-
-			// Test the connection
-			statusCmd := conn.Ping(c.Context())
-			if statusCmd == nil {
-				return healthcheck.CheckerResult{Checker: name, Status: false, Message: "can't run ping command on redis"}
-			}
-
-			err := statusCmd.Err()
-			if err != nil {
-				return healthcheck.CheckerResult{Checker: name, Status: false, Message: err.Error()}
-			}
-
-			_, err = statusCmd.Result()
+			name := w.storage.Name()
+			err := w.storage.Status()
 			if err != nil {
 				return healthcheck.CheckerResult{Checker: name, Status: false, Message: err.Error()}
 			}

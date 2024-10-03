@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.5.0
 	github.com/google/wire v0.6.0
 	github.com/jinzhu/configor v1.2.2
+	github.com/maypok86/otter v1.2.3
 	github.com/redis/go-redis/v9 v9.6.1
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.8.0
@@ -18,6 +19,8 @@ require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dolthub/maphash v0.1.0 // indirect
+	github.com/gammazero/deque v0.2.1 // indirect
 	github.com/gofiber/template v1.8.3 // indirect
 	github.com/gofiber/utils v1.1.0 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect

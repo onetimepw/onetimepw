@@ -3,12 +3,11 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/onetimepw/onetimepw/domain"
 	"github.com/redis/go-redis/v9"
 )
 
-func NewClient(config domain.Config) (*redis.Client, error) {
-	opt, err := redis.ParseURL(config.Redis.Addr)
+func NewClient(redisAddr string) (*redis.Client, error) {
+	opt, err := redis.ParseURL(redisAddr)
 	if err != nil {
 		return nil, err
 	}

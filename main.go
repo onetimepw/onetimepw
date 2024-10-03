@@ -37,7 +37,7 @@ func main() {
 	startTime = time.Now()
 	build.StartTime = startTime
 
-	var configPath = flag.String("config", "config.yml", "path to config file")
+	var configPath = flag.String("config", "otwp.config.yml", "path to config file")
 
 	flag.Parse()
 
