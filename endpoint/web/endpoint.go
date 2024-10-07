@@ -50,10 +50,13 @@ func New(
 	}
 
 	app := fiber.New(fiber.Config{
-		Views:        engine,
-		JSONEncoder:  json.Marshal,
-		JSONDecoder:  json.Unmarshal,
-		ErrorHandler: endpoint.ErrorHandler,
+		Views:                   engine,
+		JSONEncoder:             json.Marshal,
+		JSONDecoder:             json.Unmarshal,
+		ErrorHandler:            endpoint.ErrorHandler,
+		EnableTrustedProxyCheck: true,
+		ProxyHeader:             "X-Forwarded-For",
+		TrustedProxies:          []string{"172.18.0.1"},
 	})
 
 	app.Use(logger.New())
@@ -80,6 +83,13 @@ func New(
 	})
 
 	app.Get("/health/check", endpoint.handlerCheck)
+	app.Get("/ip", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"ip":              c.IP(),
+			"x-forwarded-for": c.Get("x-forwarded-for"),
+			"x-real-ip":       c.Get("x-real-ip"),
+		})
+	})
 
 	apiGroup := app.Group("/api")
 	{
